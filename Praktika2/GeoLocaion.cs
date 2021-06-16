@@ -1,12 +1,14 @@
-﻿using System;
+﻿using MySql.Data.MySqlClient;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace Praktika2
 {
-    class GeoLocaion
+    public class GeoLocaion
     {
         public double Lat { get; private set; }
         public double Lng { get; private set; }
@@ -15,6 +17,30 @@ namespace Praktika2
         {
             this.Lat = Lat;
             this.Lng = Lng;
+        }
+        public GeoLocaion(string Name)
+        {
+            DataBaseConnecting dataBase = new DataBaseConnecting();
+            dataBase.OpenConnect();
+
+            try
+            {
+                MySqlCommand query = new MySqlCommand($"SELECT lat, lng FROM `geo` WHERE city = '{Name}'", dataBase.GetConnect());
+
+                using (MySqlDataReader dataReader = query.ExecuteReader())
+                {
+                    dataReader.Read();
+                    this.Lat = Double.Parse(dataReader["lat"].ToString().Replace(".",","));
+                    this.Lng = Double.Parse(dataReader["lng"].ToString().Replace(".", ","));
+                }
+            }
+            catch (MySqlException ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+
+
+            dataBase.CloseConnect();
         }
 
         static public double CalculatingDistance(GeoLocaion l1, GeoLocaion l2)
@@ -29,6 +55,7 @@ namespace Praktika2
 
             return d;
         }
+        
 
     }
 }

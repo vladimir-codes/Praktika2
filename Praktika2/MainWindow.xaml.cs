@@ -24,14 +24,25 @@ namespace Praktika2
         public MainWindow()
         {
             InitializeComponent();
-
-
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
-        {   
-           MessageBox.Show(String.Join(Environment.NewLine, Search.JustSearch(TBFrom.Text, TBwhere.Text, DPStart.SelectedDate.Value, DPEnd.SelectedDate.Value)));
+        {
+            TravelsInfoPanel.Children.Clear();
+            CreateTravelsPanels();
         }
+
+        private void CreateTravelsPanels()
+        {
+            List <Travel> travels = Search.JustSearch(TBFrom.Text, TBwhere.Text, DPStart.SelectedDate.Value);
+            foreach (var item in travels)
+            {
+                TravelPanel tp = new TravelPanel(item);
+                //tp.VerticalAlignment = VerticalAlignment.Bottom;
+                TravelsInfoPanel.Children.Add(tp);
+            }
+        }
+
 
         //void TextBoxDropDownHintControl_OnSelect(object sender, TextBoxDropDownHint.Controls.SelectionChanged e)
         //{
