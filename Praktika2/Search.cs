@@ -4,62 +4,70 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace Praktika2
 {
-    class Search
+    abstract class Search
     {
-        //public static List<Product> JustSearch(bool Mode, string[] valuetextfield, string[] fieldNames)
-        //{
-        //    var Products = new List<Product>();
-        //    string[] values = new string[fieldNames.Length];
-        //    Array.Copy(valuetextfield, values, valuetextfield.Length);
-        //    DataBaseConnecting dataBase = new DataBaseConnecting();
-        //    dataBase.OpenConnect();
-        //    string switcher = Mode == true ? "AND" : "OR";
+        private static string requirement = "";
+        private static int count = 0;
+        public static List<Travel> JustSearch(string From, string Where, DateTime Start, DateTime End)
+        {
+            var travels = new List<Travel>();
 
-        //    string requirement = "";
-        //    for (int i = 0; i < fieldNames.Length; i++)
-        //    {
-        //        if (Mode == false) requirement += $" `{fieldNames[i]}` LIKE '%{values[0]}%' ";
-        //        else requirement += $" `{fieldNames[i]}` LIKE '%{values[i]}%' ";
-        //        if (i < fieldNames.Length - 1) requirement += switcher;
-        //    }
+            DataBaseConnecting dataBase = new DataBaseConnecting();
+            dataBase.OpenConnect();
 
-        //    try
-        //    {
-        //        MySqlCommand query =
-        //        new MySqlCommand($"SELECT * FROM products WHERE {requirement}", dataBase.GetConnect());
+            if(count==0)requirement = $"city = '{Where}' AND time > '{Start.Date.ToString(@"yyyy-MM-dd")}'";
 
-        //        using (MySqlDataReader dataReader = query.ExecuteReader())
-        //        {
-        //            while (dataReader.Read())
-        //            {
-        //                Products.Add(new Product
-        //                (
-        //                    dataReader["id"].ToString(),
-        //                    dataReader["name"].ToString(),
-        //                    dataReader["code"].ToString(),
-        //                    dataReader["price"].ToString(),
-        //                    dataReader["count"].ToString()
-        //                ));
+            try
+            {
+                MySqlCommand query =
+                new MySqlCommand($"SELECT * FROM `geo` WHERE {requirement}", dataBase.GetConnect());
 
-        //            }
-        //        }
-        //    }
-        //    catch (MySqlException ex)
-        //    {
-        //        MessageBox.Show(ex.Message);
-        //    }
+                using (MySqlDataReader dataReader = query.ExecuteReader())
+                {
+                    while (dataReader.Read())
+                    {
+                        travels.Add(new Travel
+                        (
+                            dataReader["region"].ToString(),
+                            dataReader["city"].ToString(),
+                            ((DateTime)dataReader["time"]),
+                            (Boolean)dataReader["food"],
+                            (Boolean)dataReader["guided_tours"]
+                        ));
 
-        //    dataBase.CloseConnect();
-        //    if (Products.Count == 0)
-        //    {
-        //        MessageBox.Show("По вашему запросу ничего не найдено");
-        //    }
-        //    return Products;
+                    }
+                }
+            }
+            catch (MySqlException ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
 
-        //}
+            dataBase.CloseConnect();
+            if (travels.Count == 0)
+            {
+                if (count == 0)
+                {
+                    // TODO : добавить условие на основе прошлых поездок
+                    count = 1;
+                    requirement = $"region = (SELECT region From `geo` Where city = '{Where}') AND time > '{Start.Date.ToString(@"yyyy-MM-dd")}'";
+                    travels = JustSearch(From, Where, Start, End);
+                }
+                else
+                {
+                    // TODO : добавить условие для групповой выборки популярных мест
 
+                    requirement = $"city = 'Москва'";
+                    travels = JustSearch(From, Where, Start, End);                 
+                }
+            }
+            count = 0;
+            return travels;
+
+        }
     }
 }

@@ -25,28 +25,26 @@ namespace Praktika2
         {
             InitializeComponent();
 
-            List<TestModel> coll = new List<TestModel>();
-            coll.Add(new TestModel() { Id = 1, Name = "Москва", Description = "Описание города" });
-            coll.Add(new TestModel() { Id = 2, Name = "Санкт-Петербург", Description = "Описание города" });
-            coll.Add(new TestModel() { Id = 3, Name = "Екатеринбург", Description = "Описание города" });
-            coll.Add(new TestModel() { Id = 4, Name = "Уфа", Description = "Описание города" });
-            coll.Add(new TestModel() { Id = 5, Name = "Пенза", Description = "Описание города" });
 
-            DataContext = new { TestCollection = coll };
         }
 
-        void TextBoxDropDownHintControl_OnSelect(object sender, TextBoxDropDownHint.Controls.SelectionChanged e)
-        {
-            if (e.Value != null)
-            {
-                TestModel model = e.Value as TestModel;
-                if (model == null) return;
-
-                tbxDescription.Text = model.Description;
-            }
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {   
+           MessageBox.Show(String.Join(Environment.NewLine, Search.JustSearch(TBFrom.Text, TBwhere.Text, DPStart.SelectedDate.Value, DPEnd.SelectedDate.Value)));
         }
 
+        //void TextBoxDropDownHintControl_OnSelect(object sender, TextBoxDropDownHint.Controls.SelectionChanged e)
+        //{
+        //    if (e.Value != null)
+        //    {
+        //        TestModel model = e.Value as TestModel;
+        //        if (model == null) return;
 
-            
+        //        tbxDescription.Text = model.Description;
+        //    }
+        //}
+
+
+
     }
 }

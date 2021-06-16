@@ -66,6 +66,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="DataBaseConnecting.cs" />
     <Compile Include="GeoLocaion.cs" />
     <Compile Include="Search.cs" />
     <Compile Include="TBModel.cs" />
