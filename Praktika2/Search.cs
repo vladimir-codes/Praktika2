@@ -12,7 +12,7 @@ namespace Praktika2
     {
         private static string requirement = "";
         private static int count = 0;
-        public static List<Travel> JustSearch(string From , string Where, DateTime Start)
+        public static List<Travel> JustSearch(string From , string Where, DateTime Start , int End)
         {
             var travels = new List<Travel>();
 
@@ -32,9 +32,11 @@ namespace Praktika2
                     {
                         travels.Add(new Travel
                         (
+                            dataReader["country"].ToString(),
                             dataReader["region"].ToString(),
                             dataReader["city"].ToString(),
                             ((DateTime)dataReader["time"]),
+                            End,
                             (Boolean)dataReader["food"],    
                             (Boolean)dataReader["guided_tours"],
                             new GeoLocaion(From),
@@ -57,14 +59,14 @@ namespace Praktika2
                     // TODO : добавить условие на основе прошлых поездок
                     count = 1;
                     requirement = $"region = (SELECT region From `geo` Where city = '{Where}' LIMIT 1) AND time > '{Start.Date.ToString(@"yyyy-MM-dd")}'";
-                    travels = JustSearch(From, Where, Start);
+                    travels = JustSearch(From, Where, Start, End);
                 }
                 else
                 {
                     // TODO : добавить условие для групповой выборки популярных мест
 
                     requirement = $"city = 'Москва'";
-                    travels = JustSearch(From, Where, Start );                 
+                    travels = JustSearch(From, Where, Start ,End);                 
                 }
             }
             count = 0;

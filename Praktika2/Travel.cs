@@ -8,6 +8,7 @@ namespace Praktika2
 {
     public class Travel
     {
+        public string Country { get; private set; }
         public string District { get; private set; }
         public string City { get; private set; }
         public DateTime Date { get; private set; }
@@ -16,16 +17,17 @@ namespace Praktika2
         public bool Guided_tours { get; private set; }
         public double Distance { get; private set; }
 
-        public Travel(string district, string city, DateTime date, bool food, bool guided_tours , GeoLocaion from , GeoLocaion where)
+        public Travel(string country , string district, string city, DateTime Start, int Days, bool food, bool guided_tours , GeoLocaion from , GeoLocaion where)
         {
+            Country = country;
             District = district;
             City = city;
-            Date = date;
+            Date = Start;
             Food = food;
             Guided_tours = guided_tours;
+
             Distance = GeoLocaion.CalculatingDistance(from,where);
 
-            int Days = 7;
 
             Price = Math.Round(Distance * 10 + Days * 3500 + (food==true? Days * 1000 : 0) + (Guided_tours == true ? Days * 1000 /1.5 : 0),0);
         }

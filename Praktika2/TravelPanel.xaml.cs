@@ -27,6 +27,7 @@ namespace Praktika2
         public TravelPanel( Travel trv)
         {
             InitializeComponent();
+            TBCountry.Text += trv.Country;
             TBcity.Text += trv.City;
             TBDistrict.Text += trv.District;
             TBDate.Text += trv.Date.ToShortDateString();

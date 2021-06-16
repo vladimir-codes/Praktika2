@@ -20,6 +20,7 @@
                 <ColumnDefinition Width="auto"/>
             </Grid.ColumnDefinitions>
             <StackPanel Grid.Column="0">
+                <TextBlock Name="TBCountry">Страна:  </TextBlock>
                 <TextBlock Name="TBDistrict">Регион:  </TextBlock>
                 <TextBlock Name="TBDate">Дата:  </TextBlock>
                 <TextBlock Name="TBPrice">Цена:  </TextBlock>

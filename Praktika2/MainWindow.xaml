@@ -20,7 +20,7 @@
                 <TextBox Name="TBFrom" materialDesign:HintAssist.Hint="Откуда"  MinWidth="100"></TextBox>
                 <TextBox Name="TBwhere"  materialDesign:HintAssist.Hint="Куда" MinWidth="100" Margin="10,0,10,0"></TextBox>
                 <DatePicker Name="DPStart" materialDesign:HintAssist.Hint="Дата начала" Margin="10,0,10,0"></DatePicker>
-                <DatePicker Name="DPEnd" materialDesign:HintAssist.Hint="Дата конца"></DatePicker>
+                <TextBox Name="TBEnd" materialDesign:HintAssist.Hint="Количество дней" TextChanged="TBEnd_TextChanged" ></TextBox>
                 <Button Margin="10,0,10,0" Click="Button_Click">Найти</Button>
             </StackPanel>
         </Border>

@@ -34,12 +34,27 @@ namespace Praktika2
 
         private void CreateTravelsPanels()
         {
-            List <Travel> travels = Search.JustSearch(TBFrom.Text, TBwhere.Text, DPStart.SelectedDate.Value);
+            List <Travel> travels = Search.JustSearch(TBFrom.Text, TBwhere.Text, DPStart.SelectedDate.Value , Int32.Parse(TBEnd.Text));
             foreach (var item in travels)
             {
                 TravelPanel tp = new TravelPanel(item);
                 //tp.VerticalAlignment = VerticalAlignment.Bottom;
+                if (TravelsInfoPanel.Children.Count < 4)
                 TravelsInfoPanel.Children.Add(tp);
+            }
+        }
+
+        private void TBEnd_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            try
+            {
+                Int32.Parse(TBEnd.Text);
+            }
+            catch (Exception)
+            {
+                if (TBEnd.Text.Length == 0) {TBEnd.Text = ""; return;}
+                TBEnd.Text = TBEnd.Text.Remove(TBEnd.Text.Length-1);
+                TBEnd.SelectionStart = TBEnd.Text.Length;
             }
         }
 
