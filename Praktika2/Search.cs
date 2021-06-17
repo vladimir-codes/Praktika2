@@ -12,19 +12,19 @@ namespace Praktika2
     {
         private static string requirement = "";
         private static int count = 0;
-        public static List<Travel> JustSearch(string From , string Where, DateTime Start , int End)
+        public static List<Travel> JustSearch(string From, string Where, DateTime Start, int End)
         {
             var travels = new List<Travel>();
 
             DataBaseConnecting dataBase = new DataBaseConnecting();
             dataBase.OpenConnect();
 
-            if(count==0)requirement = $"city = '{Where}' AND time > '{Start.Date.ToString(@"yyyy-MM-dd")}'";
+            if(count==0)requirement = $"SELECT * FROM `geo` WHERE city = '{Where}' AND time > '{Start.Date.ToString(@"yyyy-MM-dd")}'";
 
             try
             {
                 MySqlCommand query =
-                new MySqlCommand($"SELECT * FROM `geo` WHERE {requirement}", dataBase.GetConnect());
+                new MySqlCommand($"{requirement}", dataBase.GetConnect());
 
                 using (MySqlDataReader dataReader = query.ExecuteReader())
                 {
@@ -40,7 +40,7 @@ namespace Praktika2
                             (Boolean)dataReader["food"],    
                             (Boolean)dataReader["guided_tours"],
                             new GeoLocaion(From),
-                            new GeoLocaion(Where)
+                            new GeoLocaion(dataReader["city"].ToString())
                         ));
 
                     }
@@ -56,16 +56,17 @@ namespace Praktika2
             {
                 if (count == 0)
                 {
+                    //Выбираются города из того же региона что и введенный город или на основе предыдущих поездок
                     // TODO : добавить условие на основе прошлых поездок
                     count = 1;
-                    requirement = $"region = (SELECT region From `geo` Where city = '{Where}' LIMIT 1) AND time > '{Start.Date.ToString(@"yyyy-MM-dd")}'";
+                    requirement = $"SELECT * FROM `geo` WHERE (region = (SELECT region From `geo` Where city = '{Where}' LIMIT 1) AND time > '{Start.Date.ToString(@"yyyy-MM-dd")}')";
                     travels = JustSearch(From, Where, Start, End);
                 }
                 else
                 {
-                    // TODO : добавить условие для групповой выборки популярных мест
+                    // Выбираются самые популярные города 
 
-                    requirement = $"city = 'Москва'";
+                    requirement = $"Select DISTINCT t1.* From `geo` t1 LEFT JOIN `travels` t2 ON t1.city = t2.city Where t1.city = (SELECT t2.city FROM `travels` WHERE 1 Group By t2.city  ORDER By  COUNT(t2.id) DESC LIMIT 3)";
                     travels = JustSearch(From, Where, Start ,End);                 
                 }
             }

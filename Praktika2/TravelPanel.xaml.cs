@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MySql.Data.MySqlClient;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,13 +21,15 @@ namespace Praktika2
     /// </summary>
     public partial class TravelPanel : UserControl
     {
+        private Travel travel;
         public TravelPanel()
         {
             InitializeComponent();
         }
-        public TravelPanel( Travel trv)
+        public TravelPanel(Travel trv)
         {
             InitializeComponent();
+            this.travel = trv;
             TBCountry.Text += trv.Country;
             TBcity.Text += trv.City;
             TBDistrict.Text += trv.District;
@@ -34,6 +37,30 @@ namespace Praktika2
             TBPrice.Text += trv.Price.ToString();
             TBFood.Text += trv.Food == true ? "Питание включено в цену" : "Без питания";
             TBGuided_tours.Text += trv.Guided_tours == true ? "Экскурсии включены в цену" : "Без экскурсий";
+        }
+
+        private void BBuy_Click(object sender, RoutedEventArgs e)
+        {
+            DataBaseConnecting dataBase = new DataBaseConnecting();
+            dataBase.OpenConnect();
+
+            try
+            {
+                MySqlCommand connect = new MySqlCommand($"INSERT INTO `travels`(`name`, `city`, `price`) VALUES (@login, @city, @price)", dataBase.GetConnect());
+                connect.Parameters.Add("@login", MySqlDbType.VarChar).Value = Session.login;
+                connect.Parameters.Add("@city", MySqlDbType.VarChar).Value = travel.City;
+                connect.Parameters.Add("@price", MySqlDbType.VarChar).Value = travel.Price;
+                if (MessageBox.Show("Подтвердите бронирование", "Подтверждение", MessageBoxButton.YesNo) == MessageBoxResult.Yes) {
+                    if (connect.ExecuteNonQuery() == 1) MessageBox.Show("Успешное бронирование", "Успешно");
+                    else MessageBox.Show("Не удалось забронировать", "Ошибка");
+                }
+            }
+            catch (MySqlException ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+
+            dataBase.CloseConnect();
         }
     }
 }

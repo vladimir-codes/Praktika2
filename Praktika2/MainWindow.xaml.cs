@@ -28,8 +28,15 @@ namespace Praktika2
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            TravelsInfoPanel.Children.Clear();
-            CreateTravelsPanels();
+            if (TBFrom.Text == String.Empty) TBFrom.Focus();
+            else if (TBwhere.Text == String.Empty) TBwhere.Focus();
+            else if (DPStart.Text == "") DPStart.Focus();
+            else if (TBEnd.Text == String.Empty) TBEnd.Focus();
+            else
+            {
+                TravelsInfoPanel.Children.Clear();
+                CreateTravelsPanels();
+            }
         }
 
         private void CreateTravelsPanels()
@@ -38,7 +45,6 @@ namespace Praktika2
             foreach (var item in travels)
             {
                 TravelPanel tp = new TravelPanel(item);
-                //tp.VerticalAlignment = VerticalAlignment.Bottom;
                 if (TravelsInfoPanel.Children.Count < 4)
                 TravelsInfoPanel.Children.Add(tp);
             }
@@ -58,19 +64,9 @@ namespace Praktika2
             }
         }
 
-
-        //void TextBoxDropDownHintControl_OnSelect(object sender, TextBoxDropDownHint.Controls.SelectionChanged e)
-        //{
-        //    if (e.Value != null)
-        //    {
-        //        TestModel model = e.Value as TestModel;
-        //        if (model == null) return;
-
-        //        tbxDescription.Text = model.Description;
-        //    }
-        //}
-
-
-
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            Application.Current.Shutdown();
+        }
     }
 }

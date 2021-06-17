@@ -66,9 +66,16 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Authorization.xaml.cs">
+      <DependentUpon>Authorization.xaml</DependentUpon>
+    </Compile>
     <Compile Include="DataBaseConnecting.cs" />
     <Compile Include="GeoLocaion.cs" />
     <Compile Include="Search.cs" />
+    <Compile Include="Session.cs" />
+    <Compile Include="SignUP.xaml.cs">
+      <DependentUpon>SignUP.xaml</DependentUpon>
+    </Compile>
     <Compile Include="TBModel.cs" />
     <Compile Include="TextBoxDropDownHintControl.xaml.cs">
       <DependentUpon>TextBoxDropDownHintControl.xaml</DependentUpon>
@@ -77,6 +84,10 @@
     <Compile Include="TravelPanel.xaml.cs">
       <DependentUpon>TravelPanel.xaml</DependentUpon>
     </Compile>
+    <Page Include="Authorization.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -89,6 +100,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="SignUP.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="TextBoxDropDownHintControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
