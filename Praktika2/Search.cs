@@ -10,21 +10,45 @@ namespace Praktika2
 {
     abstract class Search
     {
-        private static string requirement = "";
-        private static int count = 0;
+        //delegate void qwe(List<string> conditions , Delegate function);
+
+        //delegate List<Travel> Result(string From, string Where, DateTime date, int End, string requirement, DataBaseConnecting dataBase);
+
         public static List<Travel> JustSearch(string From, string Where, DateTime Start, int End)
         {
+
             var travels = new List<Travel>();
 
             DataBaseConnecting dataBase = new DataBaseConnecting();
             dataBase.OpenConnect();
 
-            if(count==0)requirement = $"SELECT * FROM `geo` WHERE city = '{Where}' AND time > '{Start.Date.ToString(@"yyyy-MM-dd")}'";
+             if (CheckToExists(From, dataBase) != true) return travels;
+             if (CheckToExists(Where, dataBase) != true) return travels;
+            
+            List<string> conditions = new List<string>();
+            conditions.Add($"SELECT * FROM `geo` WHERE city = '{Where}' AND time >= '{Start.Date.ToString(@"yyyy-MM-dd")}'");
+            conditions.Add($"SELECT * FROM `geo` WHERE (region = (SELECT region From `geo` Where city = '{Where}' LIMIT 1) AND city<>'{Where}' AND time >= '{Start.Date.ToString(@"yyyy-MM-dd")}')");
+            conditions.Add($"SELECT * FROM `geo` WHERE (country = (SELECT country From `geo` Where city = '{Where}' LIMIT 1) AND city<>'{Where}' AND time >= '{Start.Date.ToString(@"yyyy-MM-dd")}') ORDER BY population DESC ");
+                         
+                foreach (var item in conditions)
+                {
+                    if (travels.Count > TravelPanel.MAX_CARDS) break;
+                    int limit = TravelPanel.MAX_CARDS - travels.Count;
+                    travels.AddRange(QueueCheck(From, Where, Start, End, item, dataBase, limit));
+                }
+            
 
+            dataBase.CloseConnect();
+            return travels;
+
+        }
+
+        static private List<Travel> QueueCheck(string From, string Where, DateTime date, int End,string requirement, DataBaseConnecting dataBase, int limit)
+        {
+            List<Travel> travels = new List<Travel>();
             try
             {
-                MySqlCommand query =
-                new MySqlCommand($"{requirement}", dataBase.GetConnect());
+                MySqlCommand query = new MySqlCommand($"{requirement} LIMIT {limit}", dataBase.GetConnect());
 
                 using (MySqlDataReader dataReader = query.ExecuteReader())
                 {
@@ -37,7 +61,7 @@ namespace Praktika2
                             dataReader["city"].ToString(),
                             ((DateTime)dataReader["time"]),
                             End,
-                            (Boolean)dataReader["food"],    
+                            (Boolean)dataReader["food"],
                             (Boolean)dataReader["guided_tours"],
                             new GeoLocaion(From),
                             new GeoLocaion(dataReader["city"].ToString())
@@ -45,34 +69,33 @@ namespace Praktika2
 
                     }
                 }
+                return travels;
             }
             catch (MySqlException ex)
             {
                 MessageBox.Show(ex.Message);
+                return travels;
             }
+        }
 
-            dataBase.CloseConnect();
-            if (travels.Count == 0)
+
+        static private bool CheckToExists(string field, DataBaseConnecting dataBase)
+        {
+            MySqlCommand CheckExists = new MySqlCommand($"SELECT COUNT(id) as count FROM `geo` WHERE city = '{field}'", dataBase.GetConnect());
+            int count = 0;
+            using (MySqlDataReader dataReader = CheckExists.ExecuteReader())
             {
-                if (count == 0)
+                while (dataReader.Read())
                 {
-                    //Выбираются города из того же региона что и введенный город или на основе предыдущих поездок
-                    // TODO : добавить условие на основе прошлых поездок
-                    count = 1;
-                    requirement = $"SELECT * FROM `geo` WHERE (region = (SELECT region From `geo` Where city = '{Where}' LIMIT 1) AND time > '{Start.Date.ToString(@"yyyy-MM-dd")}')";
-                    travels = JustSearch(From, Where, Start, End);
-                }
-                else
-                {
-                    // Выбираются самые популярные города 
-
-                    requirement = $"Select DISTINCT t1.* From `geo` t1 LEFT JOIN `travels` t2 ON t1.city = t2.city Where t1.city = (SELECT t2.city FROM `travels` WHERE 1 Group By t2.city  ORDER By  COUNT(t2.id) DESC LIMIT 3)";
-                    travels = JustSearch(From, Where, Start ,End);                 
+                    count = Int32.Parse(dataReader["count"].ToString()); 
                 }
             }
-            count = 0;
-            return travels;
-
+            if (count == 0)
+            {
+                MessageBox.Show($"Города {field} не существует, или вы неправильно написали");
+                return false;
+            } 
+            else return true;
         }
     }
 }

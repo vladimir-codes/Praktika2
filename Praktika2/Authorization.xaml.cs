@@ -30,6 +30,7 @@ namespace Praktika2
             if (TBLogin.Text == String.Empty) TBLogin.Focus();
             else if (TBPass.Password == String.Empty) TBPass.Focus();
 
+
             else if (Session.OpenSession(TBLogin.Text, TBPass.Password) == true)
             {
                 main.Show();

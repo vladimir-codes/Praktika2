@@ -29,7 +29,7 @@ namespace Praktika2
             Distance = GeoLocaion.CalculatingDistance(from,where);
 
 
-            Price = Math.Round(Distance * 10 + Days * 3500 + (food==true? Days * 1000 : 0) + (Guided_tours == true ? Days * 1000 /1.5 : 0),0);
+            Price = Math.Round(Distance * 10 + Days * 5000 + (food==true? Days * 1000 : 0) + (Guided_tours == true ? Days * 1000  : 0),0);
         }
 
         public override string ToString()

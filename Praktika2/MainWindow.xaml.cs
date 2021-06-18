@@ -12,7 +12,6 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using TextBoxDropDownHint;
 
 namespace Praktika2
 {
@@ -35,17 +34,19 @@ namespace Praktika2
             else
             {
                 TravelsInfoPanel.Children.Clear();
+                Mouse.OverrideCursor = Cursors.Wait;
                 CreateTravelsPanels();
+                Mouse.OverrideCursor = Cursors.Arrow;
             }
         }
 
         private void CreateTravelsPanels()
         {
             List <Travel> travels = Search.JustSearch(TBFrom.Text, TBwhere.Text, DPStart.SelectedDate.Value , Int32.Parse(TBEnd.Text));
+
             foreach (var item in travels)
             {
                 TravelPanel tp = new TravelPanel(item);
-                if (TravelsInfoPanel.Children.Count < 4)
                 TravelsInfoPanel.Children.Add(tp);
             }
         }

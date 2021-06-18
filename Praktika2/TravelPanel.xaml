@@ -27,8 +27,13 @@
                 <TextBlock Name="TBFood">Питание:  </TextBlock>
                 <TextBlock Name="TBGuided_tours">Экскурсии:  </TextBlock>
             </StackPanel>
-            <Button Name="BBuy" Margin="0,24,1,24" HorizontalAlignment="Right" VerticalAlignment="Center" Grid.Column="1" Click="BBuy_Click">Заказать</Button>
+            <StackPanel Grid.Column="1">
+                <TextBlock Name="TBDiscount"></TextBlock>
+                <TextBlock Name="TBtTotal_amount"></TextBlock>
+                <Button Name="BBuy" Margin="0,24,1,24" HorizontalAlignment="Right" VerticalAlignment="Center" Grid.Column="1" Click="BBuy_Click">Заказать</Button>
 
+            </StackPanel>
+            
         </Grid>
 
     </Grid>

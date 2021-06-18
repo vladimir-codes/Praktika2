@@ -22,6 +22,7 @@ namespace Praktika2
     public partial class TravelPanel : UserControl
     {
         private Travel travel;
+        static public int MAX_CARDS { get; private set; } = 4;
         public TravelPanel()
         {
             InitializeComponent();
@@ -37,6 +38,8 @@ namespace Praktika2
             TBPrice.Text += trv.Price.ToString();
             TBFood.Text += trv.Food == true ? "Питание включено в цену" : "Без питания";
             TBGuided_tours.Text += trv.Guided_tours == true ? "Экскурсии включены в цену" : "Без экскурсий";
+            TBDiscount.Text = "Скидка: " + Discount.GetDiscount().ToString() +"%";
+            TBtTotal_amount.Text = "ИТОГО: " + GetTotalAmount();
         }
 
         private void BBuy_Click(object sender, RoutedEventArgs e)
@@ -46,10 +49,11 @@ namespace Praktika2
 
             try
             {
-                MySqlCommand connect = new MySqlCommand($"INSERT INTO `travels`(`name`, `city`, `price`) VALUES (@login, @city, @price)", dataBase.GetConnect());
+                MySqlCommand connect = new MySqlCommand($"INSERT INTO `travels`(`name`, `city`, `price`,`discount`) VALUES (@login, @city, @price , @dis)", dataBase.GetConnect());
                 connect.Parameters.Add("@login", MySqlDbType.VarChar).Value = Session.login;
                 connect.Parameters.Add("@city", MySqlDbType.VarChar).Value = travel.City;
-                connect.Parameters.Add("@price", MySqlDbType.VarChar).Value = travel.Price;
+                connect.Parameters.Add("@price", MySqlDbType.VarChar).Value = GetTotalAmount();
+                connect.Parameters.Add("@dis", MySqlDbType.VarChar).Value = Discount.GetDiscount();
                 if (MessageBox.Show("Подтвердите бронирование", "Подтверждение", MessageBoxButton.YesNo) == MessageBoxResult.Yes) {
                     if (connect.ExecuteNonQuery() == 1) MessageBox.Show("Успешное бронирование", "Успешно");
                     else MessageBox.Show("Не удалось забронировать", "Ошибка");
@@ -61,6 +65,10 @@ namespace Praktika2
             }
 
             dataBase.CloseConnect();
+        }
+        private int GetTotalAmount()
+        {
+            return  (int)travel.Price / 100 * (100 - Discount.GetDiscount());
         }
     }
 }

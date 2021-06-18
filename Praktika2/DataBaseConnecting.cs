@@ -10,7 +10,7 @@ namespace Praktika2
 {
     class DataBaseConnecting
     {
-        const string info = "server=localhost; username=root; password=root; database=travels    ; port=8889";
+        const string info = "server=mysql54.hostland.ru; username=host1832446; password=OSkzNufdpz; database=host1832446";
         MySqlConnection connect = new MySqlConnection(info);
 
         public DataBaseConnecting()

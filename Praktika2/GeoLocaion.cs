@@ -13,6 +13,7 @@ namespace Praktika2
         public double Lat { get; private set; }
         public double Lng { get; private set; }
 
+
         public GeoLocaion(double Lat , double Lng)
         {
             this.Lat = Lat;
